@@ -3,7 +3,9 @@ import HomePage from "./page/HomePage";
 function App() {
   return (
     <>
-      <HomePage />
+      <div className="flex justify-center">
+        <HomePage />
+      </div>
     </>
   );
 }

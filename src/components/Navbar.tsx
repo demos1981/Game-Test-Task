@@ -1,9 +1,10 @@
 import React from "react";
+import StatusBar from "./StatusBar";
 
 const Navbar: React.FC = () => {
   return (
     <div>
-      <h2>Navbar</h2>
+      <StatusBar />
     </div>
   );
 };

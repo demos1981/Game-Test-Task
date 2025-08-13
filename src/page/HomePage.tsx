@@ -11,14 +11,16 @@ import HomeIndicator from "../components/HomeIndicator";
 const HomePage: React.FC = () => {
   return (
     <>
-      <Navbar />
-      <Title />
-      <RewardCounter />
-      <GameField />
-      <TipsField />
-      <ClaimButton />
-      <TapbarField />
-      <HomeIndicator />
+      <div className="bg-[url('/src/assets/RectangleGreen.svg')]  h-dvh w-[428px] bg-cover bg-center">
+        <Navbar />
+        <Title />
+        <RewardCounter />
+        <GameField />
+        <TipsField />
+        <ClaimButton />
+        <TapbarField />
+        <HomeIndicator />
+      </div>
     </>
   );
 };

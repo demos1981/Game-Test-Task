@@ -2,11 +2,11 @@ import React from "react";
 
 const StatusBar: React.FC = () => {
   return (
-    <section className="flex  items-center h-[3rem] ">
-      <div className="flex ml-7 w-[13rem]">
+    <section className="flex  items-center justify-center h-[3rem] w-[348px]">
+      <div className="mr-auto">
         <img src="/src/assets/Time.svg" alt="timeIcon" />
       </div>
-      <div className="flex flex-row justify-end mr-3  w-[11rem]">
+      <div className="flex gap-4">
         <img
           className="mr-1"
           src="/src/assets/CellularConnection.svg"

@@ -7,7 +7,7 @@ const Title: React.FC = () => {
         <div className="flex justify-center flex-row w-[396px] h-6">
           <img className="w-[127px]" src="src/assets/Line.svg" alt="Logo" />
           <img
-            className="w-[111px] mr-[1rem] ml-[1rem]"
+            className="w-[111px] mr-[2rem] ml-[2rem]"
             src="src/assets/RollCraft.svg"
             alt="rollcraft"
           />

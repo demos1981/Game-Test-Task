@@ -4,7 +4,7 @@ import StatusBar from "./StatusBar";
 const Navbar: React.FC = () => {
   return (
     <>
-      <section>
+      <section className="flex flex-col items-center">
         <StatusBar />
         <div>
           <div className=" h-6  flex  justify-center items-center mt-6">

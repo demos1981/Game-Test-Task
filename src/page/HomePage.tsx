@@ -6,20 +6,23 @@ import GameField from "../components/GameField";
 import TipsField from "../components/TipsField";
 import ClaimButton from "../components/ClaimButton";
 import TapbarField from "../components/TapbarField";
-import HomeIndicator from "../components/HomeIndicator";
+import Background from "../components/Background";
 
 const HomePage: React.FC = () => {
   return (
     <>
-      <div className="bg-[url('/src/assets/RectangleGreen.svg')]  min-h-dvh min-w-[428px] bg-cover bg-center ">
-        <Navbar />
-        <Title />
-        <RewardCounter />
-        <GameField />
-        <TipsField />
-        <ClaimButton />
-        <TapbarField />
-        <HomeIndicator />
+      <div className="relative min-h-dvh min-w-[428px] overflow-hidden">
+        
+        <Background/>
+        <div className="relative z-10">
+          <Navbar />
+          <Title />
+          <RewardCounter />
+          <GameField />
+          <TipsField />
+          <ClaimButton />
+          <TapbarField />
+        </div>
       </div>
     </>
   );

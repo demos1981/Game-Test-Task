@@ -11,7 +11,7 @@ import HomeIndicator from "../components/HomeIndicator";
 const HomePage: React.FC = () => {
   return (
     <>
-      <div className="bg-[url('/src/assets/RectangleGreen.svg')]  h-dvh w-[428px] bg-cover bg-center">
+      <div className="bg-[url('/src/assets/RectangleGreen.svg')]  min-h-dvh min-w-[428px] bg-cover bg-center ">
         <Navbar />
         <Title />
         <RewardCounter />

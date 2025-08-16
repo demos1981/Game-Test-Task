@@ -2,12 +2,49 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { cardsData } from "../data/cardsData";
 import type { FlipCardPropsType } from "../types/flipCard";
+import ClaimSection from "./ClaimSection";
 
 const GameField: React.FC<{
   onApply: (fn: (prev: number) => number) => void;
 }> = ({ onApply }) => {
+  // список відкритих за цей раунд карток (щоб зарахувати їх по Claim)
+  const [openedCards, setOpenedCards] = useState<
+    { id: number; value?: number; op?: string }[]
+  >([]);
+
+  const handleCardOpen = (card: {
+    id: number;
+    value?: number;
+    op?: string;
+  }) => {
+    // не додаємо дубль, якщо картка вже є у списку відкритих
+    setOpenedCards((prev) =>
+      prev.some((c) => c.id === card.id) ? prev : [...prev, card]
+    );
+  };
+
+  const handleClaim = () => {
+    if (openedCards.length === 0) return;
+
+    onApply((prev) => {
+      let result = prev;
+      for (const card of openedCards) {
+        if (card.op === "x2") {
+          result *= 2; // множимо за кожну "x2" у відкритих
+        } else {
+          result += card.value ?? 0; // додаємо значення
+        }
+      }
+      return result;
+    });
+
+    // після Claim очищаємо відкриті (щоб кнопка знову стала сірою)
+    setOpenedCards([]);
+  };
+
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex flex-col justify-center items-center">
+      {/* Сітка карт */}
       <div className="w-[356px] h-[356px] grid grid-cols-3 mt-5">
         {cardsData.map((card) => (
           <FlipCard
@@ -16,37 +53,36 @@ const GameField: React.FC<{
             back={card.back}
             value={card.value}
             op={card.op === "x2" ? "x2" : undefined}
-            onApply={onApply}
+            onOpen={() =>
+              handleCardOpen({ id: card.id, value: card.value, op: card.op })
+            }
           />
         ))}
       </div>
+
+      {/* Кнопка Claim + модалка у окремому блоці */}
+      <ClaimSection
+        // старі пропси для сумісності, не використовуються:
+        allOpened={false}
+        onRevealAll={() => {}}
+        // нова логіка:
+        disabled={openedCards.length === 0}
+        onClaim={handleClaim}
+      />
     </div>
   );
 };
 
-const FlipCard: React.FC<FlipCardPropsType> = ({
-  front,
-  back,
-  value,
-  op,
-  onApply,
-}) => {
+const FlipCard: React.FC<
+  Omit<FlipCardPropsType, "onApply"> & { onOpen: () => void }
+> = ({ front, back, onOpen }) => {
   const [flipped, setFlipped] = useState(false);
-  const [applied, setApplied] = useState(false);
+
   const handleClick = () => {
-    const willFlipToBack = !flipped;
-
-    // застосовуємо ефект лише при першому відкритті "назад"
-    if (willFlipToBack && !applied) {
-      if (op === "x2") {
-        onApply((prev) => prev * 2); // ⬅ множимо на 2
-      } else {
-        onApply((prev) => prev + (value ?? 0)); // ⬅ додаємо число
-      }
-      setApplied(true);
+    if (!flipped) {
+      onOpen(); // реєструємо картку як відкриту для поточного "раунду"
     }
-
-    setFlipped(!flipped);
+    setFlipped(true);
   };
 
   return (
@@ -79,4 +115,5 @@ const FlipCard: React.FC<FlipCardPropsType> = ({
     </div>
   );
 };
+
 export default GameField;

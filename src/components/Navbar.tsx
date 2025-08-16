@@ -8,11 +8,7 @@ const Navbar: React.FC = () => {
         <StatusBar />
         <div>
           <div className=" h-6  flex  justify-center items-center mt-6">
-            <img
-              className=""
-              src="src/assets/WhiteGreenLogo.svg"
-              alt="Exclude"
-            />
+            <img className="" src="/assets/WhiteGreenLogo.svg" alt="Exclude" />
           </div>
         </div>
       </section>

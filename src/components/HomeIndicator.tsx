@@ -5,7 +5,7 @@ const HomeIndicator: React.FC = () => {
     <div className="flex justify-center items-center mt-2">
       <img
         className="h-2 w-[139px]"
-        src="src/assets/HomeIndicator.svg"
+        src="assets/HomeIndicator.svg"
         alt="Home"
       />
     </div>

@@ -7,27 +7,19 @@ const TapbarField: React.FC = () => {
       <nav className="flex flex-row justify-around mt-[4rem]  ">
         <ul className="flex flex-row">
           <li className="mr-4">
-            <img className="h-14 " src="src/assets/Office2.svg" alt="Office" />
+            <img className="h-14 " src="/assets/Office2.svg" alt="Office" />
           </li>
           <li className="mr-4">
-            <img
-              className="h-14"
-              src="src/assets/Resources.svg"
-              alt="Resources"
-            />
+            <img className="h-14" src="/assets/Resources.svg" alt="Resources" />
           </li>
           <li className="mr-4">
-            <img
-              className="h-14"
-              src="src/assets/Materias.svg"
-              alt="Materias"
-            />
+            <img className="h-14" src="/assets/Materias.svg" alt="Materias" />
           </li>
           <li className="mr-4">
-            <img className="h-14" src="src/assets/Goods.svg" alt="Goods" />
+            <img className="h-14" src="/assets/Goods.svg" alt="Goods" />
           </li>
           <li className="mr-4">
-            <img className="h-14" src="src/assets/Stock.svg" alt="Stock" />
+            <img className="h-14" src="/assets/Stock.svg" alt="Stock" />
           </li>
         </ul>
       </nav>

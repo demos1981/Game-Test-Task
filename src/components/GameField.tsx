@@ -1,91 +1,141 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { cardsData } from "../data/cardsData";
-import type { FlipCardPropsType } from "../types/flipCard";
 import ClaimSection from "./ClaimSection";
 
-const GameField: React.FC<{
-  onApply: (fn: (prev: number) => number) => void;
-}> = ({ onApply }) => {
-  // список відкритих за цей раунд карток (щоб зарахувати їх по Claim)
-  const [openedCards, setOpenedCards] = useState<
-    { id: number; value?: number; op?: string }[]
+type Card = {
+  id: number;
+  front: string;
+  back: string;
+  value?: number;
+  op?: string; // наприклад "x2"
+};
+
+type GameFieldProps = {
+  onApply: React.Dispatch<React.SetStateAction<number>>;
+  rewardCounterRef: React.RefObject<HTMLDivElement | null>; // <-- дозволяємо null
+};
+
+const GameField: React.FC<GameFieldProps> = ({ onApply, rewardCounterRef }) => {
+  const [openedCards, setOpenedCards] = useState<Card[]>([]);
+  const [flyingItems, setFlyingItems] = useState<
+    {
+      id: number;
+      img: string;
+      value?: number;
+      op?: string;
+      startX: number;
+      startY: number;
+      endX: number;
+      endY: number;
+    }[]
   >([]);
 
-  const handleCardOpen = (card: {
-    id: number;
-    value?: number;
-    op?: string;
-  }) => {
-    setOpenedCards((prev) =>
-      prev.some((c) => c.id === card.id) ? prev : [...prev, card]
-    );
-  };
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // ⬇️ ПОВИНЕН ПОВЕРТАТИ number (дельту доданих балів)
-  const handleClaim = (): number => {
-    if (openedCards.length === 0) return 0;
+  const applyCardValue = (
+    card: { value?: number; op?: string },
+    prev: number
+  ): number => (card.op === "x2" ? prev * 2 : prev + (card.value ?? 0));
 
-    let delta = 0;
+  const handleCardOpen = (
+    card: Card,
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (openedCards.some((c) => c.id === card.id)) return;
 
-    onApply((prev) => {
-      let result = prev;
+    setOpenedCards((prev) => [...prev, card]);
 
-      // відтворюємо точний порядок ефектів: додавання/множення в тій послідовності,
-      // в якій карти були відкриті
-      for (const card of openedCards) {
-        if (card.op === "x2") {
-          result *= 2;
-        } else {
-          result += card.value ?? 0;
-        }
-      }
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const counterRect = rewardCounterRef.current?.getBoundingClientRect();
+    const containerRect = containerRef.current?.getBoundingClientRect();
 
-      delta = result - prev; // скільки саме додали в цьому клеймі
-      return result;
-    });
-
-    setOpenedCards([]); // після Claim очищаємо відкриті
-    return delta;
+    if (counterRect && containerRect) {
+      setFlyingItems((prev) => [
+        ...prev,
+        {
+          id: Date.now() + Math.random(),
+          img: card.back,
+          value: card.value,
+          op: card.op,
+          startX: rect.left - containerRect.left,
+          startY: rect.top - containerRect.top,
+          endX:
+            counterRect.left -
+            containerRect.left +
+            counterRect.width / 2 -
+            rect.width / 4,
+          endY:
+            counterRect.top -
+            containerRect.top +
+            counterRect.height / 2 -
+            rect.height / 4,
+        },
+      ]);
+    }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div
+      ref={containerRef}
+      className="relative flex flex-col justify-center items-center"
+    >
       {/* Сітка карт */}
       <div className="w-[356px] h-[356px] grid grid-cols-3 mt-5">
         {cardsData.map((card) => (
           <FlipCard
             key={card.id}
-            front={card.front}
-            back={card.back}
-            value={card.value}
-            op={card.op === "x2" ? "x2" : undefined}
-            onOpen={() =>
-              handleCardOpen({ id: card.id, value: card.value, op: card.op })
-            }
+            card={card}
+            isOpened={openedCards.some((c) => c.id === card.id)}
+            onOpen={(e) => handleCardOpen(card, e)}
           />
         ))}
       </div>
 
-      {/* ⬇️ Передаємо тільки те, що реально є у пропсах ClaimSection */}
-      <ClaimSection disabled={openedCards.length === 0} onClaim={handleClaim} />
+      {/* Літаючі копії картинок (після доліту — нарахування) */}
+      {flyingItems.map((item) => (
+        <motion.img
+          key={item.id}
+          src={item.img}
+          className="absolute w-16 h-16 rounded-lg shadow-lg pointer-events-none"
+          initial={{ x: item.startX, y: item.startY, opacity: 1, scale: 1 }}
+          animate={{ x: item.endX, y: item.endY, opacity: 0, scale: 0.3 }}
+          transition={{ duration: 1 }}
+          onAnimationComplete={() => {
+            onApply((prev) =>
+              applyCardValue({ value: item.value, op: item.op }, prev)
+            );
+            setFlyingItems((prev) => prev.filter((f) => f.id !== item.id));
+          }}
+        />
+      ))}
+
+      {/* ClaimSection: тепер ПЕРЕДАЄМО openedCards */}
+      <ClaimSection
+        disabled={openedCards.length === 0}
+        openedCards={openedCards}
+      />
     </div>
   );
 };
 
-const FlipCard: React.FC<
-  Omit<FlipCardPropsType, "onApply"> & { onOpen: () => void }
-> = ({ front, back, onOpen }) => {
+const FlipCard: React.FC<{
+  card: Card;
+  isOpened: boolean;
+  onOpen: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+}> = ({ card, isOpened, onOpen }) => {
   const [flipped, setFlipped] = useState(false);
 
-  const handleClick = () => {
-    if (!flipped) onOpen();
+  const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (!flipped) onOpen(e);
     setFlipped(true);
   };
 
   return (
     <div
-      className="w-full h-full cursor-pointer perspective"
+      className={`w-full h-full cursor-pointer perspective ${
+        isOpened ? "ring-2 ring-yellow-400" : ""
+      }`}
       onClick={handleClick}
     >
       <motion.div
@@ -99,15 +149,14 @@ const FlipCard: React.FC<
           className="absolute inset-0"
           style={{ backfaceVisibility: "hidden" }}
         >
-          <img src={front} alt="Front" className="w-full h-full" />
+          <img src={card.front} alt="Front" className="w-full h-full" />
         </div>
-
         {/* Задня */}
         <div
           className="absolute inset-0 flex items-center justify-center"
           style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}
         >
-          <img src={back} alt="Back" className="w-full h-full" />
+          <img src={card.back} alt="Back" className="w-full h-full" />
         </div>
       </motion.div>
     </div>

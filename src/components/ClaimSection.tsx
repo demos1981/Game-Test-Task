@@ -3,30 +3,30 @@ import ClaimButton from "./ClaimButton";
 import type { ClaimSectionPropsTypes } from "../types/claimSectionProps";
 import ModalClaim from "./ModalClaim";
 
-// allOpened / onRevealAll залишився у типі для сумісності, але не використовується зараз
-const ClaimSection: React.FC<
-  ClaimSectionPropsTypes & {
-    disabled: boolean;
-    onClaim: () => void;
-  }
-> = (props) => {
+const ClaimSection: React.FC<ClaimSectionPropsTypes> = (props) => {
   const { disabled, onClaim } = props;
+
+  // збереження скільки балів додано при останньому натисканні
+  const [addedPoints, setAddedPoints] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleClaimClick = () => {
     if (disabled) return;
-    onClaim();
+
+    // onClaim тепер повинен повертати кількість доданих балів
+    const points = onClaim();
+    setAddedPoints(points);
+
     setIsModalOpen(true);
   };
 
   return (
     <div className="w-full flex flex-col items-center">
       <ClaimButton disabled={disabled} onClaim={handleClaimClick} />
-      {isModalOpen && (
-        <ModalClaim onClose={() => setIsModalOpen(false)}>
-          <p className="text-center text-lg">
-            Ваши бали зараховані ✅ продовжуйте гру
-          </p>
+
+      {isModalOpen && addedPoints !== null && (
+        <ModalClaim onClose={() => setIsModalOpen(false)} points={addedPoints}>
+          <p className="text-center text-sm text-gray-500">Продовжуйте гру</p>
         </ModalClaim>
       )}
     </div>

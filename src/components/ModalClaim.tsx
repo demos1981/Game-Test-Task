@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ModalPropsType as ModalProps } from "../types/modalProps";
 
-const ModalClaim: React.FC<ModalProps> = ({ onClose, children }) => {
+const ModalClaim: React.FC<ModalProps> = ({ onClose, children, points }) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -13,7 +13,6 @@ const ModalClaim: React.FC<ModalProps> = ({ onClose, children }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // коли анімація закінчилась і модалка зникла — викликаємо onClose
   const handleExitComplete = () => {
     if (!visible) onClose();
   };
@@ -25,7 +24,7 @@ const ModalClaim: React.FC<ModalProps> = ({ onClose, children }) => {
           key="modal"
           className="fixed inset-0 z-50 flex items-start justify-center pointer-events-none"
           initial={{ y: "-100%" }}
-          animate={{ y: "30%" }} // зупинка приблизно по центру
+          animate={{ y: "30%" }}
           exit={{ y: "-100%" }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
         >
@@ -36,6 +35,10 @@ const ModalClaim: React.FC<ModalProps> = ({ onClose, children }) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
+            <p className="text-center text-lg font-semibold">
+              🎉 Вам додано <span className="text-green-600">{points}</span>{" "}
+              балів!
+            </p>
             {children}
             <button
               onClick={() => setVisible(false)}

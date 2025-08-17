@@ -17,29 +17,36 @@ const GameField: React.FC<{
     value?: number;
     op?: string;
   }) => {
-    // не додаємо дубль, якщо картка вже є у списку відкритих
     setOpenedCards((prev) =>
       prev.some((c) => c.id === card.id) ? prev : [...prev, card]
     );
   };
 
-  const handleClaim = () => {
-    if (openedCards.length === 0) return;
+  // ⬇️ ПОВИНЕН ПОВЕРТАТИ number (дельту доданих балів)
+  const handleClaim = (): number => {
+    if (openedCards.length === 0) return 0;
+
+    let delta = 0;
 
     onApply((prev) => {
       let result = prev;
+
+      // відтворюємо точний порядок ефектів: додавання/множення в тій послідовності,
+      // в якій карти були відкриті
       for (const card of openedCards) {
         if (card.op === "x2") {
-          result *= 2; // множимо за кожну "x2" у відкритих
+          result *= 2;
         } else {
-          result += card.value ?? 0; // додаємо значення
+          result += card.value ?? 0;
         }
       }
+
+      delta = result - prev; // скільки саме додали в цьому клеймі
       return result;
     });
 
-    // після Claim очищаємо відкриті (щоб кнопка знову стала сірою)
-    setOpenedCards([]);
+    setOpenedCards([]); // після Claim очищаємо відкриті
+    return delta;
   };
 
   return (
@@ -60,15 +67,8 @@ const GameField: React.FC<{
         ))}
       </div>
 
-      {/* Кнопка Claim + модалка у окремому блоці */}
-      <ClaimSection
-        // старі пропси для сумісності, не використовуються:
-        allOpened={false}
-        onRevealAll={() => {}}
-        // нова логіка:
-        disabled={openedCards.length === 0}
-        onClaim={handleClaim}
-      />
+      {/* ⬇️ Передаємо тільки те, що реально є у пропсах ClaimSection */}
+      <ClaimSection disabled={openedCards.length === 0} onClaim={handleClaim} />
     </div>
   );
 };
@@ -79,9 +79,7 @@ const FlipCard: React.FC<
   const [flipped, setFlipped] = useState(false);
 
   const handleClick = () => {
-    if (!flipped) {
-      onOpen(); // реєструємо картку як відкриту для поточного "раунду"
-    }
+    if (!flipped) onOpen();
     setFlipped(true);
   };
 

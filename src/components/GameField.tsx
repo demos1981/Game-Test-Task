@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { cardsData } from "../data/cardsData";
 import ClaimSection from "./ClaimSection";
-import ModalClaim from "./ModalClaim";
+import GameOverModal from "./GameOverModal";
 
 type Card = {
   id: number;
@@ -40,7 +40,16 @@ const GameField: React.FC<GameFieldProps> = ({ onApply, rewardCounterRef }) => {
   const [gameOverReason, setGameOverReason] = useState<"stop" | "bomb" | null>(
     null
   );
+  const [roundId, setRoundId] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const restartGame = () => {
+    setOpenedCards([]);
+    setFlyingItems([]);
+    setGameOver(false);
+    setGameOverReason(null);
+    onApply(0);
+    setRoundId((r) => r + 1);
+  };
 
   const applyCardValue = (
     card: { value?: number; op?: string },
@@ -118,7 +127,7 @@ const GameField: React.FC<GameFieldProps> = ({ onApply, rewardCounterRef }) => {
       <div className="w-[356px] h-[356px] grid grid-cols-3 mt-5 gap-0">
         {cardsData.map((card) => (
           <FlipCard
-            key={card.id}
+            key={`${roundId}-${card.id}`}
             card={card}
             isOpened={openedCards.some((c) => c.id === card.id)}
             onOpen={(e) => handleCardOpen(card, e)}
@@ -162,47 +171,7 @@ const GameField: React.FC<GameFieldProps> = ({ onApply, rewardCounterRef }) => {
       />
       {/* Модалка завершення гри */}
       {gameOver && (
-        <ModalClaim onClose={() => window.location.reload()} points={0}>
-          <div className="text-center p-4 relative">
-            <h2 className="text-xl font-bold text-red-500 mb-4">
-              Гра закінчена!
-            </h2>
-
-            {gameOverReason === "bomb" ? (
-              <>
-                <p className="text-white mb-4">
-                  💣 Ти підірвався на бомбі! Лічильник скинуто.
-                </p>
-                {/* Вибухові частинки */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {Array.from({ length: 15 }).map((_, i) => {
-                    const angle = (i / 15) * Math.PI * 2;
-                    const distance = 80 + Math.random() * 40;
-                    return (
-                      <motion.div
-                        key={i}
-                        className="w-3 h-3 bg-yellow-400 rounded-full shadow-lg"
-                        initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-                        animate={{
-                          x: Math.cos(angle) * distance,
-                          y: Math.sin(angle) * distance,
-                          opacity: 0,
-                          scale: 0.2,
-                        }}
-                        transition={{
-                          duration: 1.2,
-                          ease: "easeOut",
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-              </>
-            ) : (
-              <p className="text-white">⛔ Ти натрапив на стоп-карту!</p>
-            )}
-          </div>
-        </ModalClaim>
+        <GameOverModal reason={gameOverReason!} onRestart={restartGame} />
       )}
     </div>
   );

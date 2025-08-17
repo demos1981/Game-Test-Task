@@ -61,7 +61,7 @@ const ModalClaim: React.FC<ModalClaimProps> = ({
             onClick={onClose}
             className="mt-6 px-6 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition"
           >
-            Добре
+            Claim
           </button>
         </motion.div>
       </motion.div>

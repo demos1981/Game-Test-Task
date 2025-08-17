@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { cardsData } from "../data/cardsData";
 import ClaimSection from "./ClaimSection";
@@ -30,10 +30,21 @@ type GameFieldProps = {
   // ВАЖЛИВО: ref саме на <img> у RewardCounter
   rewardCounterRef: React.RefObject<HTMLImageElement | null>;
 };
+function shuffleArray<T>(array: T[]): T[] {
+  const newArr = [...array];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+}
 
 const FLY_SIZE = 64; // відповідає класам w-16 h-16
 
 const GameField: React.FC<GameFieldProps> = ({ onApply, rewardCounterRef }) => {
+  const [cards, setCards] = useState<Card[]>(() =>
+    shuffleArray(cardsData as Card[])
+  );
   const [openedCards, setOpenedCards] = useState<Card[]>([]);
   const [flyingItems, setFlyingItems] = useState<FlyingItem[]>([]);
   const [gameOver, setGameOver] = useState(false);
@@ -42,13 +53,19 @@ const GameField: React.FC<GameFieldProps> = ({ onApply, rewardCounterRef }) => {
   );
   const [roundId, setRoundId] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  // початкове перемішування при завантаженні
+  useEffect(() => {
+    setCards(shuffleArray(cardsData as Card[]));
+  }, []);
+
   const restartGame = () => {
+    setCards(shuffleArray(cardsData as Card[]));
     setOpenedCards([]);
     setFlyingItems([]);
     setGameOver(false);
     setGameOverReason(null);
-    onApply(0);
-    setRoundId((r) => r + 1);
+    onApply(0); // скидаємо лічильник
+    setRoundId((r) => r + 1); // форс-ремонт FlipCard (скидає локальний flipped)
   };
 
   const applyCardValue = (
@@ -61,7 +78,7 @@ const GameField: React.FC<GameFieldProps> = ({ onApply, rewardCounterRef }) => {
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     if (openedCards.some((c) => c.id === card.id)) return;
-    // спецефекти 💣⛔
+    // спецефекти
     if (card.effect === "stop") {
       setGameOverReason("stop");
       setGameOver(true);
@@ -125,7 +142,7 @@ const GameField: React.FC<GameFieldProps> = ({ onApply, rewardCounterRef }) => {
     >
       {/* Сітка карт */}
       <div className="w-[356px] h-[356px] grid grid-cols-3 mt-5 gap-0">
-        {cardsData.map((card) => (
+        {cards.map((card) => (
           <FlipCard
             key={`${roundId}-${card.id}`}
             card={card}

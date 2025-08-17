@@ -32,7 +32,7 @@ export const cardsData = [
   {
     id: 6,
     front: "/assets/CubFront.svg",
-    back: "/assets/CubBack.svg",
+    back: "/assets/1M.svg",
     value: 1000000,
   },
   {

@@ -1,21 +1,16 @@
-import { forwardRef } from "react";
+import React from "react";
 
 type RewardCounterProps = {
   counter: number;
 };
 
-const RewardCounter = forwardRef<HTMLDivElement, RewardCounterProps>(
-  ({ counter }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className="flex justify-center items-center mt-4 text-xl font-bold text-amber-50"
-      >
-        <img src="/assets/Cash.svg" alt="Reward Icon" className="mr-2" />
-        {counter}
-      </div>
-    );
-  }
+const RewardCounter = React.forwardRef<HTMLImageElement, RewardCounterProps>(
+  ({ counter }, ref) => (
+    <div className="flex items-center gap-2">
+      <img ref={ref} src="/coin.png" alt="Coin" className="w-10 h-10" />
+      <span className="text-xl font-bold">{counter}</span>
+    </div>
+  )
 );
 
 export default RewardCounter;

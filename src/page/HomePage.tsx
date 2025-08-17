@@ -10,7 +10,7 @@ import Background from "../components/Background";
 
 const HomePage: React.FC = () => {
   const [score, setScore] = useState(0);
-  const rewardCounterRef = useRef<HTMLDivElement | null>(null);
+  const rewardCounterRef = useRef<HTMLImageElement | null>(null);
   return (
     <>
       <div className="relative min-h-dvh min-w-[428px] overflow-hidden">

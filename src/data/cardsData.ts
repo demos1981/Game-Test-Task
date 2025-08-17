@@ -33,24 +33,24 @@ export const cardsData = [
     id: 6,
     front: "/assets/CubFront.svg",
     back: "/assets/CubBack.svg",
-    value: 0,
+    value: 1000000,
   },
   {
     id: 7,
     front: "/assets/CubFront.svg",
     back: "/assets/CashStop.svg",
-    value: 0,
+    effect: "stop",
   },
   {
     id: 8,
     front: "/assets/CubFront.svg",
     back: "/assets/CashZero.svg",
-    value: 0,
+    effect: "reset",
   },
   {
     id: 9,
     front: "/assets/CubFront.svg",
     back: "/assets/CashBomb.svg",
-    value: -10000,
+    effect: "bomb",
   },
 ];

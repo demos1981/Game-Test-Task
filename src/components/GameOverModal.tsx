@@ -22,7 +22,7 @@ const GameOverModal: React.FC<GameOverModalProps> = ({ reason, onRestart }) => {
           exit={{ scale: 0, opacity: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl font-extrabold mb-4">💣 БОМБА!</h2>
+          <h2 className="text-3xl font-extrabold mb-4"> БОМБА!</h2>
           <p className="mb-4 text-lg">Ти підірвався! Лічильник обнулено.</p>
           <StartButton onRestart={onRestart} />
         </motion.div>
@@ -43,7 +43,7 @@ const GameOverModal: React.FC<GameOverModalProps> = ({ reason, onRestart }) => {
           }}
           transition={{ duration: 1.2, repeat: Infinity, repeatType: "mirror" }}
         >
-          <h2 className="text-3xl font-extrabold mb-4">⛔ СТОП!</h2>
+          <h2 className="text-3xl font-extrabold mb-4"> СТОП!</h2>
           <p className="mb-4 text-lg">
             Ти натрапив на стоп-карту. Гра закінчилась.
           </p>

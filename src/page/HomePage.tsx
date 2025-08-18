@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Title from "../components/Title";
 import RewardCounter from "../components/RewardCounter";
@@ -10,7 +10,7 @@ import Background from "../components/Background";
 
 const HomePage: React.FC = () => {
   const [score, setScore] = useState(0);
-
+  const rewardCounterRef = useRef<HTMLImageElement | null>(null);
   return (
     <>
       <div className="relative min-h-dvh min-w-[428px] overflow-hidden">
@@ -18,8 +18,8 @@ const HomePage: React.FC = () => {
         <div className="relative z-10">
           <Navbar />
           <Title />
-          <RewardCounter counter={score} />
-          <GameField onApply={setScore} />
+          <RewardCounter ref={rewardCounterRef} counter={score} />
+          <GameField onApply={setScore} rewardCounterRef={rewardCounterRef} />
           <TipsField />
 
           <TapbarField />

@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import ClaimButton from "./ClaimButton";
 import ModalClaim from "./ModalClaim";
-
-type ClaimSectionProps = {
-  disabled: boolean;
-  openedCards: { id: number; front: string; back: string }[];
-};
+import type { ClaimSectionProps } from "../types/claimSectionProps";
 
 const ClaimSection: React.FC<ClaimSectionProps> = ({
   disabled,

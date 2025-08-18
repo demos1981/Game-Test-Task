@@ -1,6 +1,4 @@
-export type ClaimSectionPropsTypes = {
-  //   allOpened: boolean;
-  //   onRevealAll: () => void;
+export type ClaimSectionProps = {
   disabled: boolean;
-  onClaim: () => number;
+  openedCards: { id: number; front: string; back: string }[];
 };

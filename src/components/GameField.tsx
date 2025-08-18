@@ -3,33 +3,10 @@ import { motion } from "framer-motion";
 import { cardsData } from "../data/cardsData";
 import ClaimSection from "./ClaimSection";
 import GameOverModal from "./GameOverModal";
+import type { Card } from "../types/gameFieldProps";
+import type { FlyingItem } from "../types/gameFieldProps";
+import type { GameFieldProps } from "../types/gameFieldProps";
 
-type Card = {
-  id: number;
-  front: string;
-  back: string;
-  value?: number;
-  op?: string; // "x2" або "+"
-  effect?: string;
-};
-
-type FlyingItem = {
-  id: number;
-  img: string;
-  value?: number;
-  op?: string;
-
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-};
-
-type GameFieldProps = {
-  onApply: React.Dispatch<React.SetStateAction<number>>;
-  // ВАЖЛИВО: ref саме на <img> у RewardCounter
-  rewardCounterRef: React.RefObject<HTMLImageElement | null>;
-};
 function shuffleArray<T>(array: T[]): T[] {
   const newArr = [...array];
   for (let i = newArr.length - 1; i > 0; i--) {
